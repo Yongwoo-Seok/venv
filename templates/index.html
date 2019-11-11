@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+		
+		<!-- Webpage Title -->
+    <title>원페이지 쇼핑몰!</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+		
+		<!-- JS -->		
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    
+
+    <script>
+
+      //주문하기
+      function ordering() {
+      let name = $('#order_name').val();
+      let count = $('#order_count').val();
+      let address = $('#order_address').val();
+      let phone = $('#order_phone').val();
+      let item = '승리의 포즈 오구';
+
+      // 주문저장
+      $.ajax({
+        type: "POST", 
+        url : "/shop",
+        //url: "http://spartacodingclub.shop/order", 
+        data: { name_give: name, count_give: count, address_give: address , phone_give : phone , item_give : item}, 
+        success: function(response){ 
+          if (response['result'] == 'success') {
+            alert('주문 성공!');
+            window.location.reload();
+          } else {
+            alert('주문 실패!')
+          }
+        }
+      })
+    }
+
+    //시작할 때 리스트 불러오기
+    $(document).ready(function(){
+    $('#order_table').html('<thead>\
+          <tr>\
+            <th scope="col">상품명</th>\
+            <th scope="col">이름</th>\
+            <th scope="col">수량</th>\
+            <th scope="col">주소</th>\
+            <th scope="col">전화번호</th>\
+          </tr>\
+      </thead>')
+    listing();
+    });
+
+    //주문 불러오기
+    function listing() {
+    $.ajax({
+        type: "GET",
+        url : "/shop?item_give=승리의 포즈 오구",
+        //url: "http://spartacodingclub.shop/order?item_give=승리의 포즈 오구",
+        data: {},
+        success: function(response){
+          if (response['result'] == 'success'){
+            let orders = response['orders'];
+            for ( let i = 0; i < orders.length ; i++){
+              make_table(orders[i]['item'], orders[i]['name'], orders[i]['count'], orders[i]['address'], orders[i]['phone']);
+            }
+          } else {
+            alert('주문목록을 받아오지 못했습니다.')
+          }
+        }
+      })
+    }
+    //주문 내역 만들기(테이블)
+    function make_table(item, name, count, address, phone) {
+      let temp_table = '<tr>\
+      <th scope = "row">'+ item +' </th>\
+      <th> '+ name +' </th>\
+      <th> '+ count +' </th>\
+      <th> '+ address +' </th>\
+      <th> '+ phone +' </th>\
+      </tr>'
+      $('#order_table').append(temp_table);
+    }
+    </script>
+    <style>
+
+    .picture_box { 
+    border : 2px solid; 
+    padding : 10px; 
+    }
+    .main_picture {
+    margin : 20px 80px 20px 80px; 
+    text-align : center;
+    }
+
+    .bold_name {
+      margin : 20px 20px auto 20px;
+    }
+
+    .product_detail {
+     margin : 10px 20px 10px 20px; 
+    }
+
+    .order_detail {
+     margin : 10px 20px 10px 20px; 
+    }
+
+    .order_button {
+    margin : 20px auto 20px auto;
+    text-align : center;
+    width : 200px;
+    }
+    </style>
+  </head>
+
+  <body>
+    <div class="main_picture picture_box">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxzhL9bL4uOfDb4KjU2iFLvCAJI6JwYGthHfcT2yDUR29Gbc8AKg" alt ="상품사진"width = "400" height = "400"/>
+    </div>
+    
+    <p class="bold_name">
+      <font size=6><b>상품제목</b></font><font size =3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;가격 : 48,000원 / 개</font>
+    </p>
+
+    <div class = "product_detail">
+      이 상품으로 말할 것 같으면 용왕이 찾지 못한 토끼의 간을 찾아 빨간망토의 늑대와 아기 돼지 삼형제의 숨결이 고루 녹아 있는 먹으면 120세까지 살 수 있다는 오구의 승리의 포~즈! 오구의 승리의 포즈를 감상하시겠습니다!
+    </div>
+
+    <div class="bold_name">
+      <font size = 6><b>주문하기</b></font>
+    </div>
+
+    <form class="form-inline">
+      <div class="form-group mb-2 order_detail">
+        <input type="text" readonly class="form-control-plaintext" id="box_name" value="주문자 성함: ">
+      </div>
+      <div class="form-group mx-sm-3 mb-2">
+        <input type="text" class="form-control" id="order_name">
+      </div>
+    </form>
+
+    <form class="form-inline">
+      <div class="form-group mb-2 order_detail">
+        <input type="text" readonly class="form-control-plaintext" id="box_count" value="수량: " >
+      </div>
+      <div class="form-group mx-sm-3 mb-2">
+        <select id="order_count" name="수량" style = "width :205px; height : 35px; border-radius : 5px;">
+          <option value=""></option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="direct">직접입력</option>
+        </select>
+      </div>
+    </form>
+
+    <form class="form-inline">
+      <div class="form-group mb-2 order_detail">
+        <input type="text" readonly class="form-control-plaintext" id="box_address" value="주소: ">
+      </div>
+      <div class="form-group mx-sm-3 mb-2">
+        <input type="text" class="form-control" id="order_address">
+      </div>
+    </form>
+
+    <form class="form-inline">
+      <div class="form-group mb-2 order_detail">
+        <input type="text" readonly class="form-control-plaintext" id="box_phone" value="전화번호: ">
+      </div>
+      <div class="form-group mx-sm-3 mb-2">
+        <input type="text" class="form-control" id="order_phone">
+      </div>
+    </form>
+    <div class="order_button">
+      <button type="button" onclick="ordering()" class="btn btn-primary order_button">주문하기</button>
+    </div>
+
+    <div>
+      <table class="table" id="order_table">
+      </table>
+    </div>
+  </body>
+</html>
