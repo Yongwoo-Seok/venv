@@ -83,7 +83,7 @@ def listing():
 
 
 #여기서부터 숙제입니다.
-#주문 넣기 부분
+#주문 넣기 부분!
 @app.route('/shop', methods=['POST'])
 def buying():
     name = request.form['name_give']
@@ -95,7 +95,7 @@ def buying():
     db.orders.insert_one(order_list)
     return jsonify({'result': 'success'})
 
-#주문 넣은거 보는 부분
+#주문 넣은거 보는 부분!
 @app.route('/shop', methods=['GET'])
 def showing():
     item = request.args.get('item_give')
